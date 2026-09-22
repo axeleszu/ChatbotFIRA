@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Virtual FIRA </title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #eef2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 480px;
+            height: 620px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 49, 112, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #dce2e6;
+        }
+
+        .chat-header {
+            background: #003170;
+            color: #ffffff;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chat-header span {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .reset-btn {
+            background: #1072b8;
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: #f9fbfd;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.45;
+            word-wrap: break-word;
+        }
+
+        .msg.bot {
+            background: #ffffff;
+            color: #1c252c;
+            align-self: flex-start;
+            border: 1px solid #e1e6eb;
+            border-top-left-radius: 2px;
+        }
+
+        .msg.user {
+            background: #003170;
+            color: #ffffff;
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+        }
+
+        .msg a {
+            color: #1072b8;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        .msg strong {
+            font-weight: 600;
+            color: #003170;
+        }
+
+        .msg.user strong {
+            color: #ffffff;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            background: #ffffff;
+            border-top: 1px solid #e1e6eb;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #cfd7df;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            border-color: #003170;
+        }
+
+        .send-btn {
+            margin-left: 8px;
+            background: #003170;
+            color: white;
+            border: none;
+            padding: 0 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #1072b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div>
+                <h3>Asistente Virtual FIRA</h3>
+                <span>Ambiente de Pruebas Internas</span>
+            </div>
+            <button type="button" class="reset-btn" onclick="resetChat()">Reiniciar</button>
+        </div>
+
+        <div class="chat-messages" id="messages">
+            <div class="msg bot">
+                👋 ¡Hola! Bienvenido al asistente virtual de <strong>FIRA</strong>.<br><br>
+                Escribe <strong>"hola"</strong> o el tema que deseas consultar (créditos, intermediarios, servicio social, vacantes o programas).
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="userInput" class="chat-input" placeholder="Escribe un mensaje..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button type="button" class="send-btn" onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://chatbotfira.onrender.com/api/chat";
+
+        let userId = sessionStorage.getItem("fira_user_id");
+        if (!userId) {
+            userId = "web_" + Math.random().toString(36).substring(2, 9);
+            sessionStorage.setItem("fira_user_id", userId);
+        }
+
+        function parseMarkdown(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/_(.*?)_/g, '<em>$1</em>')
+                .replace(/\[(.*?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+                .replace(/\n/g, '<br>');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const container = document.getElementById("messages");
+
+            container.innerHTML += `<div class="msg user">${text}</div>`;
+            input.value = "";
+            container.scrollTop = container.scrollHeight;
+
+            const loadingId = "load_" + Date.now();
+            container.innerHTML += `<div class="msg bot" id="${loadingId}"><em>Escribiendo...</em></div>`;
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: userId, message: text })
+                });
+                const data = await response.json();
+
+                const loadElem = document.getElementById(loadingId);
+                if (loadElem) loadElem.remove();
+
+                container.innerHTML += `<div class="msg bot">${parseMarkdown(data.response)}</div>`;
+            } catch (error) {
+                const loadElem = document.getElementById(loadingId);
+                if (loadElem) loadElem.remove();
+                container.innerHTML += `<div class="msg bot" style="color:red;">⚠️ Error de conexión con el servidor en Render.</div>`;
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function resetChat() {
+            sendMessageWithText("menu");
+        }
+
+        function sendMessageWithText(txt) {
+            document.getElementById("userInput").value = txt;
+            sendMessage();
+        }
+    </script>
+
+</body>
+
+</html>
