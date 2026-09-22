@@ -11,14 +11,20 @@ bot = FiraTransactionalBot()
 VERIFY_TOKEN = os.getenv("FB_VERIFY_TOKEN", "fira_bot_messenger_2026")
 PAGE_ACCESS_TOKEN = os.getenv("FB_PAGE_ACCESS_TOKEN")
 
+@app.after_request
+def enable_cors(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+    return response
 
 
-# ----------------------------------------------------------------------
-# 1. ENDPOINT PARA PRUEBAS WEB DIRECTAS (HTML / JS / Postman)
-# ----------------------------------------------------------------------
-@app.route("/api/chat", methods=["POST"])
+# 1. ENDPOINT HTML / JS / Postman
+@app.route("/api/chat", methods=["POST", "OPTIONS"])
 def api_chat():
-    """Permite probar el bot desde una cajita de chat web o script."""
+    if request.method == "OPTIONS":
+        return "", 200
+
     data = request.get_json(force=True)
     user_id = data.get("user_id", "web_test_user")
     message = data.get("message", "")
@@ -27,9 +33,7 @@ def api_chat():
     return jsonify({"response": reply})
 
 
-# ----------------------------------------------------------------------
 # 2. ENDPOINT DE FACEBOOK MESSENGER (Verificación y Webhook)
-# ----------------------------------------------------------------------
 @app.route("/webhook", methods=["GET"])
 def fb_verify():
     """Meta envía un GET para validar que el webhook te pertenece."""
