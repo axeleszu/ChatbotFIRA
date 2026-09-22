@@ -883,9 +883,9 @@
     "file": "pasos_para_credito.json",
     "title": "Pasos para solicitar financiamiento FIRA",
     "content": "Para solicitar un crédito con apoyo FIRA: 1. Acude a la Agencia FIRA más cercana a tu localidad para recibir orientación técnica sobre la viabilidad de tu proyecto. 2. Selecciona un intermediario financiero autorizado (banco comercial, SOFOM o cooperativa/caja de ahorro) que opere en tu región. 3. El intermediario financiero evalúa tu solicitud y formaliza el crédito con el respaldo de fondeo o garantía de FIRA.",
-    "clean_title": "Pasos Oficiales para Solicitar Crédito con FIRA",
+    "clean_title": "Pasos para Solicitar Crédito con FIRA",
     "url": "https://www.fira.gob.mx/Nd/FondeoFira.jsp",
-    "summary": "Guía en 3 pasos para presentar tu proyecto en tu agencia FIRA local y tramitar el financiamiento con un banco o caja."
+    "summary": "Para solicitar un crédito con apoyo FIRA: 1. Acude a la Agencia FIRA más cercana a tu localidad para recibir orientación técnica sobre la viabilidad de tu proyecto. 2. Selecciona un intermediario financiero autorizado (banco comercial, SOFOM o cooperativa/caja de ahorro) que opere en tu región. 3. El intermediario financiero evalúa tu solicitud y formaliza el crédito con el respaldo de fondeo o garantía de FIRA."
   },
   {
     "file": "horarios_atencion.json",
