@@ -6,9 +6,10 @@ from fira_bot import FiraTransactionalBot
 app = Flask(__name__)
 bot = FiraTransactionalBot()
 
+
 # Tokens de configuración para Facebook (los obtienes en developers.facebook.com)
 VERIFY_TOKEN = os.getenv("FB_VERIFY_TOKEN", "fira_bot_messenger_2026")
-PAGE_ACCESS_TOKEN = os.getenv("FB_PAGE_ACCESS_TOKEN", "TU_PAGE_ACCESS_TOKEN")
+PAGE_ACCESS_TOKEN = os.getenv("FB_PAGE_ACCESS_TOKEN")
 
 
 
