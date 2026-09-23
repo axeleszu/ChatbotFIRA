@@ -273,7 +273,7 @@ class FiraTransactionalBot:
             return (
                 f"🤝 **Para financiar tu proyecto de {actividad.title()} en {loc_name}:**\n\n"
                 "FIRA opera como banca de segundo piso a través de intermediarios financieros. "
-                "El primer paso oficial es **acudir a tu agencia FIRA más cercana** para presentar "
+                "El primer paso es **acudir a tu agencia FIRA más cercana** para presentar "
                 "tu idea y conectarte con las instituciones financieras con convenio:\n\n"
                 f"{respuesta_oficina}\n\n"
                 f"{programas_sugeridos}\n\n"

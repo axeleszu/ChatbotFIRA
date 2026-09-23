@@ -75,7 +75,7 @@ def fb_webhook():
 
 def send_fb_message(recipient_id: str, text: str):
     """Envía un mensaje de texto de vuelta a la API de Messenger Graph."""
-    url = f"https://graph.facebook.com/v21.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
+    url = f"https://graph.facebook.com/v26.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
     payload = {
         "recipient": {"id": recipient_id},
         "message": {"text": text}
